@@ -1,47 +1,74 @@
 const express = require('express');
+const Partner = require('../models/partner');// go to the parent directory and get the schema from model directory
+
+
 const partnerRouter = express.Router();
 
 partnerRouter.route('/')
-    .all((req, res, next) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        next();
+    .get((req, res, next) => {
+        Partner.find()
+            .then(partners => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(partners);
+            })
+            .catch(err => next(err));
     })
-    .get((req, res) => {
-        res.end('Will send all the campsites to you');
-    })
-    .post((req, res) => {
-        res.end(`Will add the campsite: ${req.body.name} with description: ${req.body.description}`);
+    .post((req, res, next) => {
+        Partner.create(req.body).then(partner => {// if we are able to successfully create a campsiter
+            console.log('Partner Created ', partner);
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(partner);
+        })
+            .catch(err => next(err));// else respond back error handler
     })
     .put((req, res) => {
         res.statusCode = 403;
-        res.end('PUT operation not supported on /campsites');
+        res.end('PUT operation not supported on /partners');
     })
-    .delete((req, res) => {
-        res.end('Deleting all campsites');
+    .delete((req, res, next) => {
+        Partner.deleteMany()
+            .then(response => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(response);
+            })
+            .catch(err => next(err));
     });
-
-
 
 partnerRouter.route('/:partnerId')
-    .all((req, res, next) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        next();
-    })
-
-    .get((req, res) => {
-        res.end(`Will send all the campsites:${req.params.partnerId} to you`);
+    .get((req, res, next) => {
+        Partner.findById(req.params.partnerId)
+            .then(partner => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(partner);
+            })
+            .catch(err => next(err));
     })
     .post((req, res) => {
-        res.end(`Will add the campsite with the Id: ${req.params.partnerId}`);
-    })
-    .put((req, res) => {
         res.statusCode = 403;
-        res.end(`PUT in${req.params.partnerId} with  ${req.body.name} `);
+        res.end(`POST operation not supported on /campsites/${req.params.partnerId}`);
     })
-    .delete((req, res) => {
-        res.end(`Deleting all campsites with id: ${req.params.partnerId}`);
+    .put((req, res, next) => {
+        Partner.findByIdAndUpdate(req.params.partnerId, {
+            $set: req.body
+        }, { new: true })
+            .then(partner => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(partner);
+            })
+            .catch(err => next(err));
+    })
+    .delete((req, res, next) => {
+        Partner.findByIdAndDelete(req.params.partnerId)
+            .then(response => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(response);
+            })
+            .catch(err => next(err));
     });
-
 module.exports = partnerRouter;
