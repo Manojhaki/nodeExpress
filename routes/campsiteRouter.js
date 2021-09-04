@@ -1,12 +1,27 @@
-const express = require('express');
-const Campsite = require('../models/campsite');
+const express = require('express');// importing middleware
+const Campsite = require('../models/campsite');// go to the parent directory and get the schema from model directory
 
-const campsiteRouter = express.Router();
+const campsiteRouter = express.Router();// using the router object in express middle ware
 
+
+// Mongoose methods are like queries
+// for example "db.campsite.find().pretty()"
+
+// this is what is reffered as automation
+
+// this is called the endpoint for the URL
+// www.campsites.com or www.campsites/.com
 campsiteRouter.route('/')
     .get((req, res, next) => {
-        Campsite.find()
-            .then(campsites => {
+        Campsite.find()// this is a mongoose method to find all the Documents within the campsite collection
+            // a Mongoose method will always return a promise this is indicated by 
+            // .then() and .catch()
+            // it means it is a promise
+            // without it you will need to call alot of callbacks (callback hell)
+            .then(campsites => {// if a user makes a GET request to a url www.campsites/.com
+                // and Mongoose is able to ger a reply back from the Databse
+                // then we do everything inside the .then() method
+                // otherwise we serve the User our error handler function in app.js
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json(campsites);
@@ -14,14 +29,16 @@ campsiteRouter.route('/')
             .catch(err => next(err));
     })
     .post((req, res, next) => {
-        Campsite.create(req.body)
-            .then(campsite => {
+        Campsite.create(req.body)// using mongoose method and passing in req.body
+            // req.body would not work if you don't have the body-parser middleware
+            .then(campsite => {// if we are able to successfully create a campsiter
+                // we respond with all the statements inside our .then method
                 console.log('Campsite Created ', campsite);
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json(campsite);
             })
-            .catch(err => next(err));
+            .catch(err => next(err));// else respond back error handler
     })
     .put((req, res) => {
         res.statusCode = 403;
@@ -36,6 +53,8 @@ campsiteRouter.route('/')
             })
             .catch(err => next(err));
     });
+
+
 
 campsiteRouter.route('/:campsiteId')
     .get((req, res, next) => {

@@ -17,6 +17,7 @@ Database
  */
 
 // creating a new instance of schema
+
 const commentSchema = new Schema({
 
     // what is javascript object notation (JSON)?
@@ -41,6 +42,10 @@ const commentSchema = new Schema({
 }, {
     timestamps: true
 });
+
+
+// Main document
+
 const campsiteSchema = new Schema({
     name: {
         type: String,
@@ -68,6 +73,8 @@ const campsiteSchema = new Schema({
         type: Boolean,
         default: false
     },
+    // sub-document
+    // declared it to be called commentSchema
     comments: [commentSchema]
 }, {
     timestamps: true  // everytime we update or create a "Documant", we update its time and date
@@ -78,6 +85,7 @@ const campsiteSchema = new Schema({
 // The first argument is the name of the collection
 // the second argument is the Schema we have built 
 // we are just creating this schema called campsite inside our database
+// setting up th structure of our collection named "campsite"
 const Campsite = mongoose.model('Campsite', campsiteSchema);
 
 module.exports = Campsite;// we export it so we can use it in our express application
