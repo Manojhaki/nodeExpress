@@ -17,7 +17,7 @@ Database
  */
 
 // creating a new instance of schema
-
+// sub-document
 const commentSchema = new Schema({
 
     // what is javascript object notation (JSON)?
@@ -75,6 +75,7 @@ const campsiteSchema = new Schema({
     },
     // sub-document
     // declared it to be called commentSchema
+// one to many . meaning a campsites can have multiple comments
     comments: [commentSchema]
 }, {
     timestamps: true  // everytime we update or create a "Documant", we update its time and date
